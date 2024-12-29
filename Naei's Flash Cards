@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nate's SQL Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #001f3f;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .flashcard-container {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        .flashcard {
+            margin-bottom: 20px;
+        }
+        .options {
+            margin: 10px 0;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        /* Styling for the Shuffle button */
+        #shuffle-btn {
+            background-color: black; /* Set background color to black */
+            color: white; /* Set text color to white */
+            padding: 20px 40px; /* Increase padding for a larger button */
+            border-radius: 10px; /* Add rounded corners */
+            font-size: 24px; /* Larger font size */
+            cursor: pointer;
+            margin-top: 30px; /* Space it further from the flashcard */
+            text-transform: uppercase; /* Make text uppercase */
+        }
+        #shuffle-btn:hover {
+            background-color: #333; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1><b>Nati's SQL Cards</b></h1>
+    <div class="flashcard-container">
+        <div class="flashcard">
+            <h2 id="flashcard-question">What does the SELECT statement do in SQL?</h2>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(this)">A) Deletes data from the database</button>
+                <button class="option-btn" onclick="checkAnswer(this)">B) Modifies table structure</button>
+                <button class="option-btn" onclick="checkAnswer(this)">C) Queries and retrieves data from the database</button>
+                <button class="option-btn" onclick="checkAnswer(this)">D) Creates a new database</button>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+    <button id="shuffle-btn">Shuffle</button> <!-- Shuffle button -->
+
+    <script>
+        const flashcards = [
+            {
+                question: "What does the SELECT statement do in SQL?",
+                options: [
+                    "Deletes data from the database",
+                    "Modifies table structure",
+                    "Queries and retrieves data from the database",
+                    "Creates a new database"
+                ],
+                correct: 2
+            },
+            {
+                question: "How do you retrieve all columns from a table named employees?",
+                options: [
+                    "SELECT all FROM employees;",
+                    "SELECT * FROM employees;",
+                    "GET * FROM employees;",
+                    "FETCH all FROM employees;"
+                ],
+                correct: 1
+            },
+            {
+                question: "What does the WHERE clause do in an SQL query?",
+                options: [
+                    "Sorts the data",
+                    "Filters records based on a condition",
+                    "Groups data",
+                    "Joins multiple tables"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the difference between WHERE and HAVING in SQL?",
+                options: [
+                    "WHERE is used after GROUP BY, HAVING is used before",
+                    "WHERE filters rows, HAVING filters groups",
+                    "Both are used interchangeably",
+                    "HAVING filters rows, WHERE filters groups"
+                ],
+                correct: 1
+            },
+            {
+                question: "What does the INSERT INTO statement do?",
+                options: [
+                    "Deletes rows from a table",
+                    "Adds new rows to a table",
+                    "Updates existing rows",
+                    "Creates a new table"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which SQL statement is used to delete a table?",
+                options: [
+                    "DELETE TABLE table_name;",
+                    "DROP TABLE table_name;",
+                    "REMOVE TABLE table_name;",
+                    "CLEAR TABLE table_name;"
+                ],
+                correct: 1
+            },
+            {
+                question: "How do you update a column in a table named 'employees'?",
+                options: [
+                    "UPDATE employees SET column = value;",
+                    "SET employees.column = value;",
+                    "MODIFY employees SET column = value;",
+                    "ALTER employees.column = value;"
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the purpose of the GROUP BY clause?",
+                options: [
+                    "Sorts data in ascending order",
+                    "Combines rows with identical values into summary rows",
+                    "Filters data based on a condition",
+                    "Joins tables"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentIndex = 0;
+        const questionElement = document.getElementById('flashcard-question');
+        const optionButtons = document.querySelectorAll('.option-btn');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+
+        function updateFlashcard() {
+            const flashcard = flashcards[currentIndex];
+            questionElement.textContent = flashcard.question;
+            optionButtons.forEach((button, index) => {
+                button.textContent = flashcard.options[index];
+                button.style.backgroundColor = '';
+            });
+
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === flashcards.length - 1;
+        }
+
+        function checkAnswer(button) {
+            const flashcard = flashcards[currentIndex];
+            const index = Array.from(optionButtons).indexOf(button);
+            if (index === flashcard.correct) {
+                button.style.backgroundColor = 'green';
+            } else {
+                button.style.backgroundColor = 'red';
+            }
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateFlashcard();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                updateFlashcard();
+            }
+        });
+
+        // Add shuffle functionality
+        function shuffleFlashcards() {
+            flashcards.sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            updateFlashcard();
+        }
+
+        // Add a button to shuffle
+        const shuffleButton = document.getElementById('shuffle-btn');
+        shuffleButton.addEventListener('click', shuffleFlashcards);
+
+        updateFlashcard();
+    </script>
+</body>
+</html>
